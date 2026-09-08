@@ -24,7 +24,10 @@ import torch.nn.functional as F
 from sklearn.metrics import accuracy_score, f1_score
 from torch.utils.data import DataLoader, Dataset
 
-from model import QuanKANV4
+try:
+    from .model import QuanKANV4
+except ImportError:
+    from model import QuanKANV4
 
 
 def seed_everything(seed: int = 42) -> None:

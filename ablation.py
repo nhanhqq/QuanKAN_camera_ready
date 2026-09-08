@@ -32,15 +32,26 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .model import (
-    EarlyEEGFeatureEnhancer,
-    EEGSpatioTemporalBackbone,
-    EntropyGate,
-    KANLinear,
-    QuanKANV4,
-    QuantumBranch,
-    grad_reverse,
-)
+try:
+    from .model import (
+        EarlyEEGFeatureEnhancer,
+        EEGSpatioTemporalBackbone,
+        EntropyGate,
+        KANLinear,
+        QuanKANV4,
+        QuantumBranch,
+        grad_reverse,
+    )
+except ImportError:
+    from model import (
+        EarlyEEGFeatureEnhancer,
+        EEGSpatioTemporalBackbone,
+        EntropyGate,
+        KANLinear,
+        QuanKANV4,
+        QuantumBranch,
+        grad_reverse,
+    )
 
 
 class CustomQuantumBranch(nn.Module):
