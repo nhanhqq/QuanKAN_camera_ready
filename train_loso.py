@@ -164,7 +164,29 @@ def train_single_fold(
         quantum_enabled=True,
     ).to(device)
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    backbone_params = list(model.backbone.parameters()) + list(model.classical_proj.parameters())
+    head_params = (
+        list(model.classical_classifier.parameters())
+        + list(model.final_classifier.parameters())
+        + list(model.subject_head.parameters())
+    )
+    frontend_params = list(model.frontend.parameters())
+    quantum_params = (
+        list(model.quantum_residual.parameters())
+        + list(model.quantum_proj.parameters())
+        + list(model.quantum_aux_head.parameters())
+        + [model.quantum_scale]
+    )
+    if model.intensity_head is not None:
+        head_params += list(model.intensity_head.parameters())
+
+    param_groups = [
+        {"params": backbone_params, "lr": args.lr},
+        {"params": head_params, "lr": args.head_lr},
+        {"params": frontend_params, "lr": args.frontend_lr},
+        {"params": quantum_params, "lr": args.head_lr},
+    ]
+    optimizer = torch.optim.AdamW(param_groups, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
 
     fold_dir = Path(args.output_dir) / f"fold_{target_subject}"
@@ -251,6 +273,8 @@ def main():
     parser.add_argument("--epochs", type=int, default=150)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--head_lr", type=float, default=5e-4)
+    parser.add_argument("--frontend_lr", type=float, default=8e-4)
     parser.add_argument("--weight_decay", type=float, default=1e-4)
     parser.add_argument("--q_device", type=str, default="default.qubit")
     parser.add_argument("--output_dir", type=str, default="results_quankan_loso")
