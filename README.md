@@ -1,1 +1,1 @@
-# QuanKAN: Quantum Kolmogorov-Arnold Networks with Spatio-Temporal Graph Attention for Subject-Invariant EEG Emotion Recognition
+# QuanKAN: Uncertainty-Gated Quantum Kolmogorov-Arnold Networks with Spectral-Conditioned Spatio-Temporal Graph Attention for Robust Cross-Subject EEG Emotion Recognition
